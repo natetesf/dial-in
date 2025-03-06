@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dial In</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <!-- ✅ Load Lexend font -->
+    <!--<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap" rel="stylesheet"> -->
+
+
+</head>
+<body>
+    <div id="game-intro">
+        <div class="intro-content">
+            <img src="static/logo.png" alt="Game Logo" class="game-logo">
+            <p>Use the number code to guess the <br>10-letter word or phrase.<br><br>You have 3 chances.</p>
+            <button id="play-btn">Play</button>
+            <p class="puzzle-info">{{current_date}}<br>No. {{game_number}}</p>
+        </div>
+    </div>
+
+    <!-- ✅ Toolbar at the top -->
+    <div id="toolbar">
+        <img src="static/logo.png" alt="Game Logo" class="toolbar-logo">
+        <p>Dial In #{{ game_number }} – {{ current_date }}</p>
+        <div id="help-icon">?</div>
+    </div>
+
+    <!-- ✅ "How to Play" Popup -->
+    <div id="how-to-play-popup" class="popup-hidden">
+        <div class="popup-content">
+            <button id="close-how-to-play">✖</button>
+            <h2>How To Play</h2>
+            <p>Guess the 10-letter word or phrase in 3 tries.</p>
+            <ul>
+                <li>Each guess must be a valid 10-letter word or phrase.</li>
+                <li>Decipher the hidden code by matching the letters to the numbers from the keypad.</li>
+                <li>The color of the boxes will show if you've placed a letter in the correct spot.</li>
+            </ul>
+
+        <!-- ✅ Number Mapping Visual -->
+        <div class="number-mapping">
+            <!-- Left side: Image -->
+            <img src="static/four.png" alt="Mapping Guide" class="mapping-image">
+
+            <!-- Middle: Three stacked number cells -->
+            <div class="number-column">
+                    <div class="example-cell">G</div>
+                    <div class="example-cell">H</div>
+                    <div class="example-cell">I</div>
+            </div>
+
+                <!-- Right Side: Single Number with Arrows -->
+            <div class="final-number">
+                <div class="example-cell correct">H</div>
+            </div>
+
+
+            </div>
+                    <!-- ✅ Example section -->
+                    <h3>Example</h3>
+                    
+                    <div class="example-row">
+                        <div class="example-cell correct">J</div>
+                        <div class="example-cell correct">A</div>
+                        <div class="example-cell correct">Z</div>
+                        <div class="example-cell correct">Z</div>
+                        <div class="example-cell correct"> </div>
+                        <div class="example-cell correct">M</div>
+                        <div class="example-cell incorrect">O</div>
+                        <div class="example-cell correct">S</div>
+                        <div class="example-cell correct">I</div>
+                        <div class="example-cell correct">C</div>
+                    </div>
+                    <p>The gray box <strong>O</strong> is not the correct letter.</p>
+                    <p>The green boxes are all correct!</p>
+                    <!-- ✅ Horizontal Divider & New Puzzle Info -->
+                    <hr class="popup-divider">
+                    <p class="new-puzzle-info">A new puzzle is released at midnight every day.</p>
+
+                </div>
+    </div>
+
+    
+    <div class="container" id="game-container">
+        <input type="text" id="hidden-mobile-input" maxlength="1">
+
+
+        <div class="number-code" data-word="{{ word }}"></div>
+        <div id="number-grid" class="grid"></div>
+        <div id="guess-container"></div>
+
+        <div id="guess-input-grid" class="grid"></div>
+
+        <!--add image-->
+        <div id="keyboard-container">
+            <img src="{{ url_for('static', filename='lightmode-keypad.png') }}" alt="Phone Keypad" class="keyboard-image">
+        </div>
+        
+        <button id="submit-btn" onclick="submitGuess()" disabled>Enter</button>
+        <!-- ✅ Share Button (Hidden Until Game Ends) -->
+        
+        <div id="shareable-popup" class="hidden">
+            <button id="close-popup">✖</button> <!-- ✅ Moved to top right -->
+
+            <div class="popup-content">
+                <h2 id="popup-message">Game Over!</h2> <!-- ✅ Dynamic message -->
+                <p id="code-word"></p>
+                <p id="shareable-text"></p>
+                <button id="copy-btn">Copy</button>
+            </div>
+        </div>
+        
+        </div>
+        
+        <!-- Share button to reopen popup -->
+        <button id="share-btn" class="hidden-share share-btn" onclick="showShareablePopup()">Share</button>
+        
+    </div>/Users/dlethabtemariam/Desktop/dialin/daily_words.db
+</body>
+</html>
