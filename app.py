@@ -1,30 +1,69 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import date, datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask_sqlalchemy import SQLAlchemy
 from config import Config
+from dotenv import load_dotenv
 
+import psycopg2
 import random
+import os
 
-
+load_dotenv()
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://dlet:pdletw@localhost:5432/words"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db = SQLAlchemy(app)
-
-class WordToday(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    word = db.Column(db.String(50), nullable=False)
-
-class WordBank(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    word = db.Column(db.String(50), nullable=False)
-
-
 
 START_DATE = date(2025, 3, 2)
+
+
+def get_current_word():
+    """Retrieve the single word from `word_today` using psycopg."""
+    conn = psycopg2.connect(  # ✅ Creates a new connection
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+    )
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT word FROM word_today LIMIT 1;")
+    word_entry = cursor.fetchone()
+
+    cursor.close()
+    conn.close()  # ✅ Closes only this request's connection
+
+    return word_entry[0] if word_entry else "ERROR WORD"
+
+
+def update_daily_word():
+    """Replace the current word with a new one from `word_bank`."""
+
+    conn = psycopg2.connect(
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT"),
+    )
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT word FROM word_bank ORDER BY RANDOM() LIMIT 1;")
+    new_word_entry = cursor.fetchone()
+
+    if new_word_entry:
+        new_word = new_word_entry[0]
+        print(f"🔄 Updating daily word to: {new_word}")
+
+        cursor.execute("DELETE FROM word_today;")
+        cursor.execute("INSERT INTO word_today (word) VALUES (%s);", (new_word,))
+
+        conn.commit()
+
+    cursor.close()
+    conn.close()  # ✅ Only closes this function's connection
+
+
+
 
 
 def get_game_number():
@@ -33,28 +72,6 @@ def get_game_number():
     print(today, START_DATE)
     delta = (today - START_DATE).days
     return delta + 1  # Game #1 starts today
-
-def get_current_word():
-    """Retrieve the single word from `WordToday` using SQLAlchemy."""
-    word_entry = WordToday.query.first()  # ✅ Fetch first row
-    return word_entry.word if word_entry else "PLACEHOLDER"  # Default if none found
-
-def update_daily_word():
-    """At midnight, replace the current word with a new one from `WordBank`."""
-    new_word_entry = WordBank.query.order_by(db.func.random()).first()  # ✅ Fetch random word
-
-    if new_word_entry:
-        new_word = new_word_entry.word
-        print(f"🔄 Updating daily word to: {new_word}")
-
-        # ✅ Clear existing word
-        WordToday.query.delete()
-
-        # ✅ Insert new word
-        new_entry = WordToday(word=new_word)
-        db.session.add(new_entry)
-        db.session.commit()
-
 
 def convert_word_to_number(word):
     """Convert a 10-letter word or phrase into a number sequence based on the phone keypad."""

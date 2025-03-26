@@ -4,13 +4,15 @@ services:
     container_name: postgres_container
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: dlet
+      POSTGRES_PASSWORD: pdletw
+      POSTGRES_DB: words
+    ports:
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Persistent storage
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U dlet -d words"]
       interval: 10s
       retries: 5
       timeout: 5s
@@ -25,9 +27,11 @@ services:
     ports:
       - "5001:5000"
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DB}
+      - DATABASE_URL=postgresql://dlet:pdletw@db:5432/words
+    env_file:
+      - .env
     volumes:
-      - ./app:/app  # Only syncs necessary files
+      - .:/app
 
 volumes:
   postgres_data:
