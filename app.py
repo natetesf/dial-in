@@ -14,9 +14,25 @@ app = Flask(__name__)
 
 START_DATE = date(2025, 3, 2)
 
+WORD_FILE_PATH = "words.txt"
 
 def get_current_word():
-    """Retrieve the single word from `word_today` using psycopg."""
+    """Retrieve the word of the day from the `words.txt` file."""
+    current_date = datetime.now().strftime('%Y-%m-%d')  # Get current date in YYYY-MM-DD format
+
+    try:
+        with open(WORD_FILE_PATH, 'r') as file:
+            for line in file:
+                date, word = line.strip().split(', ')  # Split date and word by comma
+                if date == current_date:
+                    return word  # Return the word of the current date
+        return "ERROR WORD"  # Return error if no word is found for the day
+    except FileNotFoundError:
+        return "ERROR WORD"
+    
+"""
+def get_current_word():
+    #Retrieve the single word from `word_today` using psycopg.
     conn = psycopg2.connect(  # ✅ Creates a new connection
         dbname=os.getenv("DB_NAME"),
         user=os.getenv("DB_USER"),
@@ -36,7 +52,7 @@ def get_current_word():
 
 
 def update_daily_word():
-    """Replace the current word with a new one from `word_bank`."""
+    #Replace the current word with a new one from `word_bank`
 
     conn = psycopg2.connect(
         dbname=os.getenv("DB_NAME"),
@@ -62,6 +78,11 @@ def update_daily_word():
     cursor.close()
     conn.close()  # ✅ Only closes this function's connection
 
+scheduler = BackgroundScheduler()
+scheduler.add_job(update_daily_word, 'cron', hour=0, minute=0)
+scheduler.start()
+
+"""
 
 
 
@@ -88,9 +109,6 @@ def convert_word_to_number(word):
     }
     return ''.join(keypad[char] if char in keypad else '-' for char in word.lower())
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(update_daily_word, 'cron', hour=0, minute=0)
-scheduler.start()
 
 @app.route('/')
 def index():
