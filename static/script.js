@@ -4,6 +4,15 @@ let gameOver = false;
 let correctWordArray = [];
 let currentIndex = 0; // Track the currently active cell
 
+//pull date and game # from html
+const gameInfoText = document.getElementById("game-info").innerText;
+// Split the text to get the game number and current date
+const parts = gameInfoText.split(" – ");
+const gameNumber = parts[0].replace("Dial In #", "").trim();  // Extracts the game number
+const currentDate = parts[1].trim();  // Extracts the current date
+console.log('Game Number:', gameNumber);
+console.log('Current Date:', currentDate);
+
 
 document.addEventListener("DOMContentLoaded", function () {
     // ensures that the code word was loaded into the site correctly`
@@ -298,9 +307,13 @@ function showShareablePopup(isWin) {
             .join(""))
         .join("\n"); // ✅ Ensure guesses are displayed on new lines
 
+
+
+    
+
     // ✅ Update the popup content
     document.getElementById("popup-message").innerText = message; // Set dynamic message
-    document.getElementById("shareable-text").innerText = `DIAL IN #1\n${emojiGrid}`;
+    document.getElementById("shareable-text").innerText = `DIAL IN #${gameNumber}\n${emojiGrid}`;
     document.getElementById("code-word").innerText = `\"${correctWordArray.join("").toUpperCase()}\"`;
     
     // ✅ Remove "hidden" and add "shareable-popup" class to make it visible

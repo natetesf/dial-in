@@ -7,7 +7,7 @@ import os
 
 app = Flask(__name__)
 
-START_DATE = date(2025, 3, 2)
+START_DATE = date(2025, 4, 18)
 
 WORD_FILE_PATH = "words.txt"
 

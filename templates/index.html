@@ -15,14 +15,14 @@
             <img src="static/logo.png" alt="Game Logo" class="game-logo">
             <p>Use the number code to guess the <br>10-letter word or phrase.<br><br>You have 3 chances.</p>
             <button id="play-btn">Play</button>
-            <p class="puzzle-info">{{current_date}}<br>No. {{game_number}}</p>
+            <p class="puzzle-info">{{current_date}}<br>No.{{game_number}}</p>
         </div>
     </div>
 
     <!-- ✅ Toolbar at the top -->
     <div id="toolbar">
         <img src="static/logo.png" alt="Game Logo" class="toolbar-logo">
-        <p>Dial In #{{ game_number }} – {{ current_date }}</p>
+        <p id="game-info">Dial In #{{ game_number }} – {{ current_date }}</p>
         <div id="help-icon">?</div>
     </div>
 
