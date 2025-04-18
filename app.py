@@ -1,14 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import date, datetime
-from apscheduler.schedulers.background import BackgroundScheduler
-from config import Config
-from dotenv import load_dotenv
 
 import psycopg2
 import random
 import os
-
-load_dotenv()
 
 app = Flask(__name__)
 
@@ -30,62 +25,6 @@ def get_current_word():
     except FileNotFoundError:
         return "ERROR WORD"
     
-"""
-def get_current_word():
-    #Retrieve the single word from `word_today` using psycopg.
-    conn = psycopg2.connect(  # ✅ Creates a new connection
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
-    )
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT word FROM word_today LIMIT 1;")
-    word_entry = cursor.fetchone()
-
-    cursor.close()
-    conn.close()  # ✅ Closes only this request's connection
-
-    return word_entry[0] if word_entry else "ERROR WORD"
-
-
-def update_daily_word():
-    #Replace the current word with a new one from `word_bank`
-
-    conn = psycopg2.connect(
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT"),
-    )
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT word FROM word_bank ORDER BY RANDOM() LIMIT 1;")
-    new_word_entry = cursor.fetchone()
-
-    if new_word_entry:
-        new_word = new_word_entry[0]
-        print(f"🔄 Updating daily word to: {new_word}")
-
-        cursor.execute("DELETE FROM word_today;")
-        cursor.execute("INSERT INTO word_today (word) VALUES (%s);", (new_word,))
-
-        conn.commit()
-
-    cursor.close()
-    conn.close()  # ✅ Only closes this function's connection
-
-scheduler = BackgroundScheduler()
-scheduler.add_job(update_daily_word, 'cron', hour=0, minute=0)
-scheduler.start()
-
-"""
-
-
-
 
 def get_game_number():
     """Calculate the game number based on the days elapsed since START_DATE."""
