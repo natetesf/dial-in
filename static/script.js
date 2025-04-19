@@ -393,6 +393,12 @@ document.getElementById("close-how-to-play").addEventListener("click", function 
     focusInput();
 });
 
+// ✅ Close popup when PLAY button is clicked
+document.getElementById("play-button").addEventListener("click", function () {
+    document.getElementById("how-to-play-popup").classList.add("popup-hidden");
+    focusInput();
+});
+
 
 function focusInput() {
     let mobileInput = document.getElementById("hidden-mobile-input");

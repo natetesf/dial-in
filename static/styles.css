@@ -239,6 +239,28 @@
     z-index: 1000;
 }
 
+/* play button in how to play*/
+.play-button-wrapper {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.play-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px 40px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.play-button:hover {
+    background-color: #237627;
+}
+
+
 /* ✅ Close button */
 #close-how-to-play {
     position: absolute;
