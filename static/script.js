@@ -287,16 +287,14 @@ function showShareablePopup(isWin) {
 
     // ✅ Determine the message based on the number of attempts
     let message;
-    if (isWin) {
-        if (remainingAttempts === 2) {
-            message = "You're a star. Mom and Dad would be proud"; // ✅ First try
-        } else if (remainingAttempts === 1) {
-            message = "Super!"; // ✅ Two tries
-        } else if (remainingAttempts === 0 ) {
-            message = "Get it together man"; // ✅ Three tries
-        }
+    if (remainingAttempts === 2) {
+        message = "You're a star. Mom and Dad would be proud"; // ✅ First try
+    } else if (remainingAttempts === 1) {
+        message = "Super!"; // ✅ Two tries
+    } else if (remainingAttempts === 0 ) {
+        message = "Get it together man"; // ✅ Three tries
     } else {
-        message = "Better Luck Next Time!"; // ✅ User failed
+    message = "Better Luck Next Time!"; // ✅ User failed
     }
 
     // ✅ Generate emoji-based representation of guesses
