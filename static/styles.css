@@ -524,10 +524,16 @@ body {
 }
 
 
-#countdown-timer {
+.countdown-timer {
     font-weight: bold;
     color: #007bff;
 }
+
+.normal-and {
+    color: inherit;
+    font-weight: normal;
+}
+
 
 
 

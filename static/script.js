@@ -338,18 +338,23 @@ function updateCountdown() {
     const now = new Date();
     const options = { timeZone: 'America/Chicago' };
     const chicagoNow = new Date(now.toLocaleString('en-US', options));
-    
+
     const tomorrow = new Date(chicagoNow);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0); // Midnight CST
+    tomorrow.setDate(chicagoNow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
 
     const diffMs = tomorrow - chicagoNow;
     const hours = Math.floor(diffMs / (1000 * 60 * 60));
     const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
-    document.getElementById("countdown-timer").textContent =
-        `${hours} hour${hours !== 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+    document.getElementById("countdown-hours").textContent =
+        `${hours} hour${hours !== 1 ? 's' : ''}`;
+    document.getElementById("countdown-minutes").textContent =
+        `${minutes} minute${minutes !== 1 ? 's' : ''}`;
 }
+updateCountdown();
+setInterval(updateCountdown, 60000);
+
 
 
 // Call once and set to update every minute
