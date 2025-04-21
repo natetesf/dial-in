@@ -358,7 +358,7 @@ function updateCountdown() {
     tomorrow.setDate(chicagoNow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
 
-    const diffMs = tomorrow - chicagoNow;
+    const diffMs = (tomorrow - chicagoNow) + 60000; // ⬅️ Add 1 minute
     const hours = Math.floor(diffMs / (1000 * 60 * 60));
     const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
