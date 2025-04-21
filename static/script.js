@@ -341,14 +341,16 @@ function updateCountdown() {
     
     const tomorrow = new Date(chicagoNow);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0); // Midnight
+    tomorrow.setHours(0, 0, 0, 0); // Midnight CST
 
     const diffMs = tomorrow - chicagoNow;
-    const hours = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
-    const minutes = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
 
-    document.getElementById("countdown-timer").textContent = `${hours}:${minutes}`;
+    document.getElementById("countdown-timer").textContent =
+        `${hours} hour${hours !== 1 ? 's' : ''} and ${minutes} minute${minutes !== 1 ? 's' : ''}`;
 }
+
 
 // Call once and set to update every minute
 updateCountdown();
