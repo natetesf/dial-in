@@ -204,7 +204,15 @@ function createInputGrid() {
 }
 
 document.addEventListener("keydown", function (event) {
-    if (event.key === "Enter" && !gameOver) {
+    const popup = document.getElementById("how-to-play-popup");
+    const introVisible = document.getElementById("game-intro").style.display !== "none";
+
+    if (introVisible && event.key === "Enter") {
+        document.getElementById("play-btn").click();
+    } else if (!popup.classList.contains("popup-hidden") && event.key === "Enter") {
+        document.getElementById("play-button").click();
+
+    } else if (event.key === "Enter" && !gameOver) {
         let submitButton = document.getElementById("submit-btn");
 
         // Only trigger submitGuess() if the button is enabled
@@ -213,6 +221,7 @@ document.addEventListener("keydown", function (event) {
         }
     }
 });
+
 
 
 function handleTyping(event) {
@@ -324,6 +333,27 @@ function showShareablePopup(isWin) {
 
     console.log("✅ Popup should be visible now.");
 }
+
+function updateCountdown() {
+    const now = new Date();
+    const options = { timeZone: 'America/Chicago' };
+    const chicagoNow = new Date(now.toLocaleString('en-US', options));
+    
+    const tomorrow = new Date(chicagoNow);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Midnight
+
+    const diffMs = tomorrow - chicagoNow;
+    const hours = String(Math.floor(diffMs / (1000 * 60 * 60))).padStart(2, '0');
+    const minutes = String(Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+
+    document.getElementById("countdown-timer").textContent = `${hours}:${minutes}`;
+}
+
+// Call once and set to update every minute
+updateCountdown();
+setInterval(updateCountdown, 60000);
+
 
 document.addEventListener("DOMContentLoaded", function () {
     let mobileInput = document.getElementById("hidden-mobile-input");

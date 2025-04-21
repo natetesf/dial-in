@@ -515,6 +515,21 @@ body {
     margin-right: auto;
 }
 
+.countdown-message {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+
+#countdown-timer {
+    font-weight: bold;
+    color: #007bff;
+}
+
+
 
 
 
