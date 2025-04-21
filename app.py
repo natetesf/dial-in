@@ -4,6 +4,7 @@ from datetime import date, datetime
 import psycopg2
 import random
 import os
+import pytz
 
 app = Flask(__name__)
 
@@ -12,19 +13,19 @@ START_DATE = date(2025, 4, 18)
 WORD_FILE_PATH = "words.txt"
 
 def get_current_word():
-    """Retrieve the word of the day from the `words.txt` file."""
-    current_date = datetime.now().strftime('%Y-%m-%d')  # Get current date in YYYY-MM-DD format
+    """Retrieve the word of the day based on Chicago (CST/CDT) time."""
+    chicago_tz = pytz.timezone('America/Chicago')
+    current_date = datetime.now(chicago_tz).strftime('%Y-%m-%d')
 
     try:
         with open(WORD_FILE_PATH, 'r') as file:
             for line in file:
                 date, word = line.strip().split(', ')  # Split date and word by comma
                 if date == current_date:
-                    return word  # Return the word of the current date
-        return "ERROR WORD"  # Return error if no word is found for the day
+                    return word
+        return "ERROR WORD"
     except FileNotFoundError:
         return "ERROR WORD"
-    
 
 def get_game_number():
     """Calculate the game number based on the days elapsed since START_DATE."""
