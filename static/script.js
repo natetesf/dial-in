@@ -253,13 +253,28 @@ function highlightCurrentCell(index) {
 
 function checkInput() {
     const cells = document.querySelectorAll(".input-cell");
-    
-    // Get user input, preserving spaces, but avoiding empty cells being counted
-    let guess = Array.from(cells).map(cell => (cell.textContent.length === 0 ? "_" : cell.textContent)).join("");
-    
-    // Ensure the submit button is only enabled when all 10 cells are filled with letters or spaces
-    document.getElementById("submit-btn").disabled = guess.length !== 10 || guess.includes("_");
+
+    // Build the guess
+    let guess = Array.from(cells).map(cell =>
+        (cell.textContent.length === 0 ? "_" : cell.textContent)
+    ).join("");
+
+    const submitBtn = document.getElementById("submit-btn");
+    const isValid = guess.length === 10 && !guess.includes("_");
+
+    // Enable/disable button
+    submitBtn.disabled = !isValid;
+
+    // Toggle visual classes
+    if (isValid) {
+        submitBtn.classList.remove("disabled");
+        submitBtn.classList.add("active");
+    } else {
+        submitBtn.classList.add("disabled");
+        submitBtn.classList.remove("active");
+    }
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     createInputGrid();

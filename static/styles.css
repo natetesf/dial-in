@@ -420,21 +420,46 @@ body {
     font-size: 18px;
     text-transform: uppercase;
 }
-
-#submit-btn {
-    padding: 10px;
-    font-size: 18px;
+/* Base style for circular button */
+.circle-button {
+    position: absolute;
+    left: 50%;              /* Move to middle horizontally */
+    transform: translateX(-50%); /* Truly center it */
+    z-index: 10;            /* Ensure it stays above other elements */
     margin-top: 10px;
-    cursor: pointer;
-    background: #007BFF;
-    color: white;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
     border: none;
-    border-radius: 5px;
+    background-color: gray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: not-allowed;
+    transition: background-color 0.3s ease;
+    padding: 0;
 }
 
-#submit-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
+/* Icon inside the button */
+.circle-icon {
+    width: 28px;
+    height: 28px;
+}
+
+/* Active (ready to submit) state */
+.circle-button.active {
+    background-color: #28a745;
+    cursor: pointer;
+}
+
+/* Optional hover effect when active */
+.circle-button.active:hover {
+    background-color: #218838;
+}
+
+/* Disable click styling when not ready */
+.circle-button.disabled {
+    pointer-events: none;
 }
 
 
@@ -536,10 +561,6 @@ body {
 
 
 
-
-
-
-
 /* ✅ Share button (larger & green) */
 #share-btn {
     padding: 20px 36px; /* 🔹 Increase padding for a larger button */
@@ -549,10 +570,16 @@ body {
     cursor: pointer;
     background: #28a745; /* ✅ Green button */
     color: white;
-    border: none;
+    border: none;;
     border-radius: 8px; /* 🔹 Slightly rounded corners */
     transition: background 0.2s ease-in-out;
 }
+
+.button-icon {
+    width: 48px; /* Adjust size as needed */
+    height: 48px;
+}
+
 
 /* ✅ Share button hover effect */
 #share-btn:hover {

@@ -114,8 +114,12 @@
             <img src="{{ url_for('static', filename='lightmode-keypad.png') }}" alt="Phone Keypad" class="keyboard-image">
         </div>
         
-        <button id="submit-btn" onclick="submitGuess()" disabled>Enter</button>
-        <!-- ✅ Share Button (Hidden Until Game Ends) -->
+        <button id="submit-btn" class="circle-button disabled" disabled>
+            <img src="static/phoneicon.png" alt="Call" class="circle-icon">
+        </button>
+        <!-- Share button to reopen popup -->
+        <button id="share-btn" class="hidden-share share-btn" onclick="showShareablePopup()">Share</button>
+        
         
         <div id="shareable-popup" class="hidden">
             <button id="close-popup">✖</button> <!-- ✅ Moved to top right -->
@@ -138,12 +142,6 @@
                 </p>
             </div>
         </div>
-        
-        </div>
-        
-        <!-- Share button to reopen popup -->
-        <button id="share-btn" class="hidden-share share-btn" onclick="showShareablePopup()">Share</button>
-        
     </div>
 </body>
 </html>
