@@ -4,6 +4,18 @@ let gameOver = false;
 let correctWordArray = [];
 let currentIndex = 0; // Track the currently active cell
 
+
+let timerStarted = false;
+let timerInterval = null;
+let startTime = null;
+let totalTime = 0; // in seconds
+
+
+let finalWinStatus = null;
+let finalTotalSeconds = null;
+
+
+
 //pull date and game # from html
 const gameInfoText = document.getElementById("game-info").innerText;
 // Split the text to get the game number and current date
@@ -210,6 +222,7 @@ document.addEventListener("keydown", function (event) {
     if (introVisible && event.key === "Enter") {
         document.getElementById("play-btn").click();
     } else if (!popup.classList.contains("popup-hidden") && event.key === "Enter") {
+        startGameTimer();
         document.getElementById("play-button").click();
 
     } else if (event.key === "Enter" && !gameOver) {
@@ -288,6 +301,8 @@ document.getElementById("submit-btn").onclick = function () {
 
 function endGame(isWin) {
     gameOver = true;
+    finalWinStatus = isWin;
+    finalTotalSeconds = stopGameTimer();
 
     // Hide submit button and disable input grid
     document.getElementById("submit-btn").style.display = "none";
@@ -295,10 +310,10 @@ function endGame(isWin) {
 
     console.log("Final guess locked in. No new input allowed.");
     
-    showShareablePopup(isWin);
+    showShareablePopup(isWin, finalTotalSeconds);
 }
 
-function showShareablePopup(isWin) {
+function showShareablePopup(isWin, finalTotalSeconds) {
     console.log("📢 in shareable function");
 
     let shareablePopup = document.getElementById("shareable-popup");
@@ -318,7 +333,7 @@ function showShareablePopup(isWin) {
     } else if (remainingAttempts === 0 ) {
         message = "Get it together man"; // ✅ Three tries
     } else {
-    message = "Better Luck Next Time!"; // ✅ User failed
+        message = "Better Luck Next Time!"; // ✅ User failed
     }
 
     // ✅ Generate emoji-based representation of guesses
@@ -330,12 +345,19 @@ function showShareablePopup(isWin) {
         .join("\n"); // ✅ Ensure guesses are displayed on new lines
 
 
+            
 
+    if (isWin) {
+        fullShareText = `DIAL IN #${gameNumber} solved in ${formatTime(finalTotalSeconds)}!\n${emojiGrid}`;
+        document.getElementById("shareable-text").innerText = fullShareText;
+    } else {
+        fullShareText = `DIAL IN #${gameNumber} defeated me!\n${emojiGrid}`;
+        document.getElementById("shareable-text").innerText = fullShareText;
+    }
     
 
     // ✅ Update the popup content
     document.getElementById("popup-message").innerText = message; // Set dynamic message
-    document.getElementById("shareable-text").innerText = `DIAL IN #${gameNumber}\n${emojiGrid}`;
     document.getElementById("code-word").innerText = `\"${correctWordArray.join("").toUpperCase()}\"`;
     
     // ✅ Remove "hidden" and add "shareable-popup" class to make it visible
@@ -347,6 +369,7 @@ function showShareablePopup(isWin) {
     document.getElementById("share-btn").classList.remove("hidden-share");
 
     console.log("✅ Popup should be visible now.");
+    console.log(isWin)
 }
 
 function updateCountdown() {
@@ -371,10 +394,41 @@ updateCountdown();
 setInterval(updateCountdown, 60000);
 
 
+/* timer logic to keep track of how long the user took to play */
 
-// Call once and set to update every minute
-updateCountdown();
-setInterval(updateCountdown, 60000);
+
+function startGameTimer() {
+    console.log("inside start timer");
+
+    if (timerStarted) return;
+    console.log("⏱️ startGameTimer() called");
+
+
+    timerStarted = true;
+    startTime = Date.now();
+
+    timerInterval = setInterval(() => {
+        totalTime = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(totalTime / 60);
+        const seconds = totalTime % 60;
+        document.getElementById("game-timer").textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+function stopGameTimer() {
+    clearInterval(timerInterval);
+    return totalTime;
+}
+
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+
+    const minText = m === 1 ? "1 min" : `${m} mins`;
+    const secText = s === 1 ? "1 sec" : `${s} secs`;
+
+    return m > 0 ? `${minText} ${secText}` : secText;
+}
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -406,16 +460,16 @@ function moveToNextCell() {
 
 
 document.getElementById("copy-btn").addEventListener("click", function () {
-    let shareableText = document.getElementById("shareable-text").innerText;
-    
-    navigator.clipboard.writeText(shareableText).then(() => {
+    const textToCopy = document.getElementById("shareable-text").innerText;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
         console.log("copied correctly")
     }).catch(err => {
         console.error("Error copying text: ", err);
     });
 });
 
-document.getElementById("close-popup").addEventListener("click", function () {
+    document.getElementById("close-popup").addEventListener("click", function () {
     let popup = document.getElementById("shareable-popup");
     popup.classList.remove("shareable-popup");
     popup.classList.add("hidden"); // ✅ Hide popup again
@@ -423,8 +477,9 @@ document.getElementById("close-popup").addEventListener("click", function () {
 
 
 document.getElementById("share-btn").addEventListener("click", function () {
-    document.getElementById("shareable-popup").style.display = "block"; // Show the popup
+    showShareablePopup(finalWinStatus, finalTotalSeconds);
 });
+
 
 document.getElementById("play-btn").addEventListener("click", function () {
     document.getElementById("game-intro").style.display = "none"; // Hide the overlay
@@ -434,19 +489,32 @@ document.getElementById("play-btn").addEventListener("click", function () {
 
 // ✅ Open How to Play popup
 document.getElementById("help-icon").addEventListener("click", function () {
-    document.getElementById("how-to-play-popup").classList.remove("popup-hidden");
+    const sharePopup = document.getElementById("shareable-popup");
+    const howToPopup = document.getElementById("how-to-play-popup");
+
+    // ✅ Close shareable popup if it's open
+    if (!sharePopup.classList.contains("hidden")) {
+        sharePopup.classList.add("hidden");
+        sharePopup.classList.remove("shareable-popup"); // Optional: reset any added classes
+    }
+
+    // ✅ Open How to Play
+    howToPopup.classList.remove("popup-hidden");
 });
 
 // ✅ Close How to Play popup
 document.getElementById("close-how-to-play").addEventListener("click", function () {
     document.getElementById("how-to-play-popup").classList.add("popup-hidden");
     focusInput();
+    startGameTimer(); // ✅ Start only once
 });
+
 
 // ✅ Close popup when PLAY button is clicked
 document.getElementById("play-button").addEventListener("click", function () {
     document.getElementById("how-to-play-popup").classList.add("popup-hidden");
     focusInput();
+    startGameTimer();
 });
 
 

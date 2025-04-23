@@ -100,6 +100,8 @@
 
     
     <div class="container" id="game-container">
+        <div id="game-timer" class="game-timer">0:00</div>
+
         <input type="text" id="hidden-mobile-input" maxlength="1">
 
 
@@ -129,7 +131,9 @@
 
             <div class="popup-content">
                 <h2 id="popup-message">Game Over!</h2> <!-- ✅ Dynamic message -->
+
                 <p id="code-word"></p>
+                <p id="final-time" class="final-time-text"></p>
                 <p id="shareable-text"></p>
                 <button id="copy-btn">Copy</button>
                 <!-- ✅ Countdown Message -->
