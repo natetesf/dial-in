@@ -344,8 +344,7 @@ function showShareablePopup(isWin, finalTotalSeconds) {
             .join(""))
         .join("\n"); // ✅ Ensure guesses are displayed on new lines
 
-
-            
+        
 
     if (isWin) {
         fullShareText = `DIAL IN #${gameNumber} solved in ${formatTime(finalTotalSeconds)}!\n${emojiGrid}`;
@@ -460,8 +459,10 @@ function moveToNextCell() {
 
 
 document.getElementById("copy-btn").addEventListener("click", function () {
-    const textToCopy = document.getElementById("shareable-text").innerText;
-
+    const shareText = document.getElementById("shareable-text").innerText;
+    const websiteLink = "https://dialin.fun";
+    const textToCopy = `${shareText}\n${websiteLink}`;
+    
     navigator.clipboard.writeText(textToCopy).then(() => {
         console.log("copied correctly")
     }).catch(err => {
