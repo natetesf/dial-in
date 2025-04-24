@@ -104,8 +104,15 @@
 
         <input type="text" id="hidden-mobile-input" maxlength="1">
 
+        
+        <!--<div class="number-code" data-word="{{ word }}"></div>-->
+        <!-- ✅ No data-word attribute anymore -->
+        <div id="number-grid" class="grid">
+            {% for digit in number_code %}
+                <div class="grid-cell">{{ digit }}</div>
+            {% endfor %}
+        </div>
 
-        <div class="number-code" data-word="{{ word }}"></div>
         <div id="number-grid" class="grid"></div>
         <div id="guess-container"></div>
 

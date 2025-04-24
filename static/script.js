@@ -1,5 +1,7 @@
 let remainingAttempts = 3;
 let guessProgress = [];
+let emojiFeedbackGrid = [];
+
 let gameOver = false;
 let correctWordArray = [];
 let currentIndex = 0; // Track the currently active cell
@@ -13,6 +15,7 @@ let totalTime = 0; // in seconds
 
 let finalWinStatus = null;
 let finalTotalSeconds = null;
+let finalAnswerWord = "";
 
 
 
@@ -25,29 +28,6 @@ const currentDate = parts[1].trim();  // Extracts the current date
 console.log('Game Number:', gameNumber);
 console.log('Current Date:', currentDate);
 
-
-document.addEventListener("DOMContentLoaded", function () {
-    // ensures that the code word was loaded into the site correctly`
-    let numberCodeElement = document.querySelector(".number-code");
-    
-    if (!numberCodeElement) {
-        console.error("Error: .number-code element not found.");
-        return;
-    }
-
-    let correctWord = numberCodeElement.dataset.word;
-    
-    if (!correctWord) {
-        console.error("Error: No word found in dataset.");
-        return;
-    }
-
-    correctWordArray = correctWord.toUpperCase().split("");
-    
-    console.log("Correct Word Loaded:", correctWordArray);
-    
-    displayNumberGrid(correctWordArray);
-});
 
 function displayNumberGrid(wordArray) {
     console.log(wordArray);
@@ -82,65 +62,87 @@ function submitGuess() {
     const cells = document.querySelectorAll(".input-cell");
 
     // Collect user input from the grid
-    let guess = Array.from(cells).map(cell => (cell.textContent.length === 0 ? " " : cell.textContent)).join("");
-
-    console.log("User Guess:", guess);
+    let guess = Array.from(cells)
+        .map(cell => (cell.textContent.length === 0 ? " " : cell.textContent))
+        .join("");
 
     if (guess.length !== 10) {
         console.error("Error: Guess is not exactly 10 characters.");
         return;
     }
 
-    // Store the current guess
-    guessProgress.push(guess);
+    fetch("/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            guess: guess,
+            remainingAttempts: remainingAttempts // 👈 Add this if it's not here yet
+        })
+    })
+    
+    .then(res => res.json())
+    .then(data => {
+        if (data.result === "error") {
+            console.error("❌ Invalid submission:", data.message);
+            return;
+        }
 
-    // Display the latest guess first
-    displayGuess(guess);
+        // Track the guess
+        guessProgress.push(guess);
 
-    console.log("Attempts Before Submission:", remainingAttempts);
-    if (remainingAttempts > 0) {
-        remainingAttempts--; // Only decrease if attempts are remaining
-    }
-    console.log("Attempts After Submission:", remainingAttempts);
+        // Highlight the guess using server-provided match indexes
+        displayGuess(guess, data.matches);
+        let emojiRow = "";
+        for (let i = 0; i < guess.length; i++) {
+            emojiRow += data.matches.includes(i) ? "🟩" : "⬛️";
+        }
+        console.log(emojiRow)
+        emojiFeedbackGrid.push(emojiRow);
 
-    // Hide attempt dots
-    let dotElement = document.getElementById("dot" + (remainingAttempts + 1));
-    if (dotElement) {
-        dotElement.style.visibility = "hidden";
-    }
+        if (data.word) {
+            finalAnswerWord = data.word; // ✅ global variable
+        }
 
+        // Reduce remaining attempts
+        if (remainingAttempts > 0) {
+            remainingAttempts--;
+        }
 
+        // Hide dot indicator
+        let dotElement = document.getElementById("dot" + (remainingAttempts + 1));
+        if (dotElement) {
+            dotElement.style.visibility = "hidden";
+        }
 
-    // If the game is over, DO NOT create a new input grid
-    if (guess === correctWordArray.join("") || remainingAttempts <= 0) {
-        console.log("Game Over: No new grid should be created.");
-        endGame(guess === correctWordArray.join(""));
-        return; // Stop execution
-    }
-
-    // Delay clearing input grid slightly to let the previous guess display, but only if the game isn't over
-    setTimeout(() => {
-        if (!gameOver) clearInputGrid();
-    }, 0);
+        // End game on correct guess or final attempt
+        if (data.result === "correct" || remainingAttempts <= 0) {
+            endGame(data.result === "correct");
+        } else {
+            setTimeout(() => {
+                if (!gameOver) clearInputGrid();
+            }, 0);
+        }
+    })
+    .catch(err => {
+        console.error("Guess submission failed:", err);
+    });
 }
 
-function displayGuess(guessString) {
-    const guessContainer = document.getElementById("guess-container");
 
+function displayGuess(guessString, matchIndexes = []) {
+    const guessContainer = document.getElementById("guess-container");
     let guessArray = guessString.split("");
 
     let guessRow;
 
-    // ✅ If the game is over, update the last row instead of appending a new one
     if (gameOver) {
-        guessRow = guessContainer.lastElementChild; // Get the last guess row
+        guessRow = guessContainer.lastElementChild;
         console.log("🏁 Game Over: Updating the final guess row.");
     } else {
         guessRow = document.createElement("div");
         guessRow.classList.add("guess-row");
     }
 
-    // Ensure the row is cleared before adding new cells
     guessRow.innerHTML = "";
 
     guessArray.forEach((letter, index) => {
@@ -148,28 +150,18 @@ function displayGuess(guessString) {
         cell.classList.add("grid-cell");
         cell.textContent = letter;
 
-        // ✅ Highlight correct letters in green
-        if (letter === correctWordArray[index]) {
-            cell.classList.add("correct");
+        if (matchIndexes.includes(index)) {
+            cell.classList.add("correct"); // ✅ Apply green if correct
         }
 
         guessRow.appendChild(cell);
     });
 
-    // ✅ Append the row before setting gameOver to ensure highlighting applies
     if (!gameOver) {
         guessContainer.appendChild(guessRow);
     }
-
-    // ✅ Now set gameOver AFTER the final row has been highlighted
-    if (guessString === correctWordArray.join("") || remainingAttempts <= 0) {
-        console.log("🏁 Game Over: Setting gameOver to true AFTER final row update.");
-        gameOver = true;
-    }
-    
-    
-    
 }
+
 
 
 function clearInputGrid() {
@@ -337,12 +329,7 @@ function showShareablePopup(isWin, finalTotalSeconds) {
     }
 
     // ✅ Generate emoji-based representation of guesses
-    let emojiGrid = guessProgress
-        .map(guess => guess
-            .split("")
-            .map((letter, index) => letter === correctWordArray[index] ? "🟩" : "⬛️") // ✅ Correct letters = green, incorrect = gray
-            .join(""))
-        .join("\n"); // ✅ Ensure guesses are displayed on new lines
+    let emojiGrid = emojiFeedbackGrid.join("\n");
 
         
 
@@ -357,7 +344,8 @@ function showShareablePopup(isWin, finalTotalSeconds) {
 
     // ✅ Update the popup content
     document.getElementById("popup-message").innerText = message; // Set dynamic message
-    document.getElementById("code-word").innerText = `\"${correctWordArray.join("").toUpperCase()}\"`;
+    document.getElementById("code-word").innerText = `"${finalAnswerWord}"`;
+
     
     // ✅ Remove "hidden" and add "shareable-popup" class to make it visible
     shareablePopup.classList.remove("hidden");

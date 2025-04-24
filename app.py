@@ -30,7 +30,6 @@ def get_current_word():
 def get_game_number():
     """Calculate the game number based on the days elapsed since START_DATE."""
     today = date.today()
-    print(today, START_DATE)
     delta = (today - START_DATE).days
     return delta + 1  # Game #1 starts today
 
@@ -63,30 +62,39 @@ def index():
     return render_template(
         'index.html',
         number_code=number_code,
-        word=word,
         game_number=game_number,
         current_date=current_date
     )
 
-@app.route('/guess', methods=['POST'])
-def check_guess():
-    """Check the user's guess against the correct word and track progress."""
+@app.route("/submit", methods=["POST"])
+def submit_guess():
     data = request.get_json()
-    user_guess = data.get('guess', '').upper()
-    correct_word = data.get('correct_word', '').upper()
-    remaining_attempts = int(data.get('remaining_attempts', 3))
-    guess_progress = data.get('guess_progress', [])
-    
-    correct = [user_guess[i] if user_guess[i] == correct_word[i] else "_" for i in range(10)]
-    guess_progress.append(correct)
-    
-    if user_guess == correct_word:
-        return jsonify({'result': 'correct', 'correct_word': correct_word, 'guess_progress': guess_progress})
+    guess = data.get("guess", "").upper()
+    correct_word = get_current_word().upper()
+    remaining_attempts = int(data.get("remainingAttempts", 1))  # Defaults to 1 if missing
+    print(remaining_attempts)
+
+    if len(guess) != len(correct_word):
+        return jsonify({"result": "error", "message": "Invalid guess length"}), 400
+    matches = [i for i in range(len(guess)) if guess[i] == correct_word[i]]
+
+    if guess == correct_word:
+        return jsonify({
+            "result": "correct",
+            "matches": matches,
+            "word": correct_word
+        })
+    elif remaining_attempts <= 1:
+        return jsonify({
+            "result": "incorrect",
+            "matches": matches,
+            "word": correct_word
+        })
     else:
-        remaining_attempts -= 1
-        if remaining_attempts == 0:
-            return jsonify({'result': 'game_over', 'correct_word': correct_word, 'guess_progress': guess_progress})
-        return jsonify({'result': 'incorrect', 'remaining_attempts': remaining_attempts, 'guess_progress': guess_progress})
+        return jsonify({
+            "result": "incorrect",
+            "matches": matches,
+        })
 
 if __name__ == '__main__':
     app.run(debug=True)
