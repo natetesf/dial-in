@@ -8,7 +8,10 @@ import pytz
 
 app = Flask(__name__)
 
-START_DATE = date(2025, 4, 18)
+# Localize the START_DATE to CST and set it to midnight
+CST = pytz.timezone('America/Chicago')
+START_DATE = datetime(2025, 4, 18, 0, 0, 0, 0)  # Midnight of 2025-04-18
+START_DATE = CST.localize(START_DATE)  # Localize to CST
 
 WORD_FILE_PATH = "words.txt"
 
@@ -29,8 +32,8 @@ def get_current_word():
 
 def get_game_number():
     """Calculate the game number based on the days elapsed since START_DATE."""
-    today = date.today()
-    delta = (today - START_DATE).days
+    today = datetime.now(CST).date()  # Get today's date in CST
+    delta = (today - START_DATE.date()).days  # Ensure we compare only the dates
     return delta + 1  # Game #1 starts today
 
 def convert_word_to_number(word):
