@@ -191,12 +191,13 @@
 
 /* ✅ Logo on the left */
 .toolbar-logo {
-    height: 35px; /* ✅ Adjust size as needed */
+    height: 45px; /* ✅ Adjust size as needed */
     width: auto;
 }
 
 /* ✅ Center the game info text */
 #game-info {
+    display: none;
     flex-grow: 1; /* ✅ Allows it to take up available space */
     text-align: center;
     font-size: 18px;
@@ -327,9 +328,8 @@ body {
     margin: 50px auto;
     margin-top: 0px;
     background: white;
-    padding: 20px;
+    padding: 10px;
     border-radius: 10px;
-    /*box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);*/
 }
 
 .game-timer {
@@ -342,6 +342,8 @@ body {
     border-radius: 6px;
     padding: 10px 18px;
     margin: 10px auto;
+    margin-top: 0px;
+    margin-bottom: 25px;
     text-align: center;
     letter-spacing: 1px;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.1);

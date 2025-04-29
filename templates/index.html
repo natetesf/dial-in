@@ -19,8 +19,10 @@
     <title>Dial In</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
-    <!-- ✅ Load Lexend font -->
-    <!--<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600&display=swap" rel="stylesheet"> -->
+    <link rel="icon" href="static/logoMini.png" type="image/png">
+    <!-- Apple Touch Icon (for iOS devices)         Android Icon -->
+    <link rel="apple-touch-icon" href="static/logoMini.png">
+    <link rel="icon" sizes="192x192" href="static/logoMini.png">
 </head>
 <body>
     <div id="game-intro">
@@ -34,7 +36,9 @@
 
     <!-- ✅ Toolbar at the top -->
     <div id="toolbar">
-        <img src="static/logo.png" alt="Game Logo" class="toolbar-logo">
+        <a href="https:dialin.fun">
+            <img src="static/logoMini.png" alt="Game Logo" class="toolbar-logo">
+        </a>
         <p id="game-info">Dial In #{{ game_number }} – {{ current_date }}</p>
         <div id="help-icon">?</div>
     </div>
@@ -101,8 +105,7 @@
     
     <div class="container" id="game-container">
         <div id="game-timer" class="game-timer">0:00</div>
-
-        <input type="text" id="hidden-mobile-input" maxlength="1">
+        
 
         
         <!--<div class="number-code" data-word="{{ word }}"></div>-->
@@ -117,6 +120,7 @@
         <div id="guess-container"></div>
 
         <div id="guess-input-grid" class="grid"></div>
+        <input type="text" id="hidden-mobile-input" maxlength="1">
 
         <!--add image-->
         <div id="keyboard-container">

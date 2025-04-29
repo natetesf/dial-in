@@ -295,6 +295,10 @@ function endGame(isWin) {
     gameOver = true;
     finalWinStatus = isWin;
     finalTotalSeconds = stopGameTimer();
+    
+    let mobileInput = document.getElementById("hidden-mobile-input");
+    // Remove focus from the input field to close the keyboard
+    mobileInput.blur();
 
     // Hide submit button and disable input grid
     document.getElementById("submit-btn").style.display = "none";
@@ -510,14 +514,9 @@ document.getElementById("play-button").addEventListener("click", function () {
 function focusInput() {
     let mobileInput = document.getElementById("hidden-mobile-input");
     let guessGrid = document.getElementById("guess-input-grid");
-    let focusSpot = document.getElementById("toolbar");
+    let focusSpot = document.getElementById("guess-container");
 
     mobileInput.focus();
-    
-    // ✅ Scroll to keep the guess input grid in view
-    setTimeout(() => {
-        focusSpot.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 200);
 }
 
 // ✅ Refocus when the user taps the guess input grid
