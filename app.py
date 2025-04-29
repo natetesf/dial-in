@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 # Localize the START_DATE to CST and set it to midnight
 CST = pytz.timezone('America/Chicago')
-START_DATE = datetime(2025, 4, 18, 0, 0, 0, 0)  # Midnight of 2025-04-18
+START_DATE = datetime(2025, 4, 17, 0, 0, 0, 0)  # Midnight of 2025-04-18
 START_DATE = CST.localize(START_DATE)  # Localize to CST
 
 WORD_FILE_PATH = "words.txt"
