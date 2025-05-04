@@ -226,6 +226,8 @@
 
 /* ✅ Popup layout */
 #how-to-play-popup {
+    max-height: 90%;
+    overflow: auto;
     position: fixed;
     top: 50%;
     left: 50%;
