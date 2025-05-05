@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, jsonify, make_response
-from datetime import date, datetime, json
+from datetime import date, datetime
 
 import psycopg2
 import random
 import os
 import pytz
+import json
 
 app = Flask(__name__)
 
