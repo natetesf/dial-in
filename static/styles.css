@@ -548,7 +548,7 @@ body {
 
 
 /* Improve button styling */
-#copy-btn {
+#SHARE-RESULTS-BUTTON {
     font-size: 18px;
     padding: 12px 24px;
     border: none;
@@ -559,7 +559,7 @@ body {
     transition: background 0.3s;
 }
 
-#copy-btn:hover {
+#SHARE-RESULTS-BUTTON:hover {
     background-color: #0056b3;
 }
 

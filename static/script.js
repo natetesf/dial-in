@@ -448,59 +448,6 @@ function moveToNextCell() {
     }
 }
 
-
-
-document.addEventListener("DOMContentLoaded", function() {
-    // Function to detect if the device is mobile (iOS/Android)
-    function isMobileDevice() {
-        return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    }
-
-    // Function to copy text to the clipboard
-    function copyToClipboard(text) {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-    }
-
-    // When the "Copy" button is clicked
-    document.getElementById("copy-btn").addEventListener("click", function () {
-        // Get the shareable message (from the popup content)
-        const shareText = document.getElementById("shareable-text").innerText;
-
-        // URL of your game (can be dynamic or hardcoded)
-        const websiteLink = "https://dialin.fun";  // Your game URL
-
-        // Combine the shareable text with the website link
-        const textToCopy = `${shareText}\n${websiteLink}`;
-
-        if (isMobileDevice() && navigator.share) {
-            // If on mobile and Web Share API is supported, share via Web Share API
-            navigator.share({
-                title: 'Dial In',
-                text: shareText,  // Only share the shareText message
-                url: "https://dialin.fun" // Share the game URL
-            })
-            .then(() => {
-                console.log('Game shared successfully!');
-            })
-            .catch((error) => {
-                console.error('Error sharing:', error);
-            });
-        } else {
-            // If Web Share API is not supported, copy to clipboard
-            copyToClipboard(textToCopy);
-        }
-    });
-});
-
-
-
-
-
 document.getElementById("close-popup").addEventListener("click", function () {
     let popup = document.getElementById("shareable-popup");
     popup.classList.remove("shareable-popup");

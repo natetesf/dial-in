@@ -146,8 +146,8 @@
 
                 <p id="code-word"></p>
                 <p id="final-time" class="final-time-text"></p>
-                <p id="shareable-text"></p>
-                <button id="copy-btn">Copy</button>
+                <p id="shareable-text">DEFAULT SHARE TEXT</p>
+                <button id="SHARE-RESULTS-BUTTON">SHARE YOUR RESULTS</button>
                 <!-- ✅ Countdown Message -->
                 <p id="play-again-message" class="countdown-message">
                     Want to play again?<br>
@@ -162,26 +162,47 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const copyBtn = document.getElementById("copy-btn");
-            const shareText = document.getElementById("shareable-text").innerText;
+            const shareBtn = document.getElementById("SHARE-RESULTS-BUTTON");
             const websiteLink = "https://dialin.fun";
-            const fullMessage = `${shareText}\n${websiteLink}`;
+            if (!shareBtn) return;
+
+            
         
-            copyBtn.addEventListener("click", function () {
+            shareBtn.addEventListener("click", function () {
+                const shareTextEl = document.getElementById("shareable-text");
+                if (!shareTextEl) return;
+
+                const shareText = shareTextEl.innerText;
+                const fullMessage = `${shareText}\n${websiteLink}`;
                 if (navigator.share) {
+
+                    console.log("Full message to share/copy:", fullMessage);
                     navigator.share({
-                        title: "Dial In",
                         text: fullMessage,
-                        url: websiteLink
-                    }).catch(err => console.error("Share failed:", err));
+                    }).then(() => {
+                        console.log("Shared successfully via Web Share API");
+                    }).catch(err => {
+                        console.error("Web Share failed:", err);
+                    });
                 } else {
-                    navigator.clipboard.writeText(fullMessage)
-                        .then(() => console.log("Copied to clipboard"))
-                        .catch(err => console.error("Copy failed:", err));
+                    console.log("Web Share API not supported. Using fallback copy.");
+                    const textArea = document.createElement("textarea");
+                    textArea.value = fullMessage;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand("copy");
+                        console.log("Copied to clipboard!");
+                        alert("Copied to clipboard!");
+                    } catch (err) {
+                        console.error("Fallback copy failed:", err);
+                    }
+                    document.body.removeChild(textArea);
                 }
             });
         });
-    </script>
+        </script>
+        
         
 </body>
 </html>
