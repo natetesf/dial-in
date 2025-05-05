@@ -159,5 +159,29 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const copyBtn = document.getElementById("copy-btn");
+            const shareText = document.getElementById("shareable-text").innerText;
+            const websiteLink = "https://dialin.fun";
+            const fullMessage = `${shareText}\n${websiteLink}`;
+        
+            copyBtn.addEventListener("click", function () {
+                if (navigator.share) {
+                    navigator.share({
+                        title: "Dial In",
+                        text: fullMessage,
+                        url: websiteLink
+                    }).catch(err => console.error("Share failed:", err));
+                } else {
+                    navigator.clipboard.writeText(fullMessage)
+                        .then(() => console.log("Copied to clipboard"))
+                        .catch(err => console.error("Copy failed:", err));
+                }
+            });
+        });
+    </script>
+        
 </body>
 </html>
