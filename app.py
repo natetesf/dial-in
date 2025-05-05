@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, jsonify
-from datetime import date, datetime
+from flask import Flask, render_template, request, jsonify, make_response
+from datetime import date, datetime, json
 
 import psycopg2
 import random
@@ -14,6 +14,7 @@ START_DATE = datetime(2025, 4, 17, 0, 0, 0, 0)  # Midnight of 2025-04-18
 START_DATE = CST.localize(START_DATE)  # Localize to CST
 
 WORD_FILE_PATH = "words.txt"
+
 
 def get_current_word():
     """Retrieve the word of the day based on Chicago (CST/CDT) time."""
@@ -51,6 +52,22 @@ def convert_word_to_number(word):
     }
     return ''.join(keypad[char] if char in keypad else '-' for char in word.lower())
 
+@app.route('/save')
+def save_dict(x):
+    resp = make_response("Saved data to cookie")
+    resp.set_cookie('data', json.dumps(x))  # Serialize to JSON string
+    return resp
+
+@app.route('/load')
+def load_dict():
+    user_data = request.cookies.get('data')
+    if user_data:
+        try:
+            data = json.loads(user_data)  # Deserialize back to dict
+            return f"Loaded from cookie: {data}"
+        except json.JSONDecodeError:
+            return "Invalid cookie data"
+    return "No cookie found"
 
 @app.route('/')
 def index():
@@ -66,7 +83,7 @@ def index():
         'index.html',
         number_code=number_code,
         game_number=game_number,
-        current_date=current_date
+        current_date=current_date,
     )
 
 @app.route("/submit", methods=["POST"])
@@ -82,23 +99,28 @@ def submit_guess():
     matches = [i for i in range(len(guess)) if guess[i] == correct_word[i]]
 
     if guess == correct_word:
+        save_dict(matches)
         return jsonify({
             "result": "correct",
             "matches": matches,
             "word": correct_word
+
         })
     elif remaining_attempts <= 1:
+        save_dict(matches)
         return jsonify({
             "result": "incorrect",
             "matches": matches,
             "word": correct_word
+
         })
     else:
+        save_dict(matches)
         return jsonify({
             "result": "incorrect",
             "matches": matches,
+
         })
 
 if __name__ == '__main__':
     app.run(debug=True)
-#testtest
